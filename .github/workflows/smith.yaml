@@ -1,0 +1,112 @@
+name: Agentes IA
+on:
+  workflow_call:    
+    inputs:
+      BASEPATH:
+        required: true
+        type: string 
+      BRANCH:
+        required: true
+        type: string 
+      FRAMEWORK: 
+        required: true
+        type: string 
+      LENGUAJE: 
+        required: true
+        type: string
+      EXTENSION: 
+        required: true
+        type: string
+      PROJECT_KEY:
+        required: true
+        type: string
+    secrets:    
+      REGISTRY_SECRET:
+        required: true
+      OPENAI_API_KEY:
+        required: true
+      BUCKET:
+        required: true
+      BUCKET_ACCESS_KEY: 
+        required: true
+      BUCKET_SECRET_KEY:
+        required: true
+      SLACK_TOKEN:      
+        required: true      
+      SLACK_CHANNEL_ID:
+        required: true
+      GIT_TOKEN:
+        required: true
+jobs: 
+  docker-login:
+    name: 🔐 Login to DOCR
+    runs-on: ubuntu-latest
+    outputs:
+      docker-config: ${{ steps.docker-config.outputs.docker-config }}
+    steps:
+      - name: Authenticate to DOCR
+        id: docker-config
+        run: |
+          echo "${{ secrets.REGISTRY_SECRET }}" | docker login registry.digitalocean.com -u ${{ secrets.REGISTRY_SECRET }} --password-stdin
+          
+  codeReview:
+    name: 🦾 Ejecutar AI Code Review    
+    runs-on: ubuntu-latest
+    container:
+      image: registry.digitalocean.com/bmlabs/agents/smith-codereview:dev-latest
+      credentials:
+        username: ${{ secrets.REGISTRY_SECRET }}
+        password: ${{ secrets.REGISTRY_SECRET }}
+    steps:                     
+      - name: 🔄 Clonar el repositorio        
+        uses: actions/checkout@v4
+        with:      
+          submodules: recursive      
+          fetch-depth: 0      
+          persist-credentials: true      
+          token: ${{ secrets.GIT_TOKEN }}
+        
+      - name: 🦾 Ejecutar AI Code Review Agent         
+        env:
+          BASEPATH:  ${{ github.workspace }} 
+          BRANCH: ${{ github.ref_name }}
+          PROJECT_KEY: ${{ inputs.PROJECT_KEY }}    
+          FRAMEWORK: ${{ inputs.FRAMEWORK }}
+          LENGUAJE: ${{ inputs.LENGUAJE }} 
+          EXTENSION: ${{ inputs.EXTENSION }} 
+          UPLOAD2S3: "True"          
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}          
+          BUCKET: ${{ secrets.BUCKET }}
+          BUCKET_ACCESS_KEY: ${{ secrets.BUCKET_ACCESS_KEY }} 
+          BUCKET_SECRET_KEY: ${{ secrets.BUCKET_SECRET_KEY }}
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+          
+        run: python /app/code-review.py 
+
+      - name: 📥 Subir Informe de Revisión como Artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: CodeReview Report
+          path: /app/out/bmlabs-votacion-api.zip
+          retention-days: 1  
+
+      - name: ✅ Publicar Resultado en GitHub Checks        
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('/app/out/reporte.md', 'utf8');
+            const summary = report;
+            github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: "Code Review",
+              head_sha: context.sha,
+              status: "completed",
+              conclusion: "neutral",
+              output: {
+                title: "Code Review",
+                summary: summary
+              }
+            });
