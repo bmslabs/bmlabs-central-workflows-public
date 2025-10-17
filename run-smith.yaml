@@ -1,0 +1,23 @@
+name: smith
+on:
+  workflow_dispatch:
+
+jobs:
+  smith-codereviewer:
+    uses: bmslabs/bmlabs-central-workflows-public/.github/workflows/smith.yaml@dev
+    with:
+      BASEPATH: ${{ github.workspace }}
+      BRANCH: ${{ github.ref_name }}
+      PROJECT_KEY: cima.master_ionix
+      FRAMEWORK: .net8
+      LENGUAJE: C#
+      EXTENSION: cs
+    secrets:
+      GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      REGISTRY_SECRET: ${{ secrets.REGISTRY_SECRET }}
+      BUCKET: ${{ secrets.BUCKET }}
+      BUCKET_ACCESS_KEY: ${{ secrets.BUCKET_ACCESS_KEY }}
+      BUCKET_SECRET_KEY: ${{ secrets.BUCKET_SECRET_KEY }}
+      SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+      SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
