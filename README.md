@@ -31,7 +31,7 @@ Utiliza la herramienta `gh` para ejecutar el action. Asegúrate de estar autenti
 Ejemplo de ejecución:
 
 ```sh
-gh workflow run smith.yaml 
+ gh workflow run smith.yaml --ref develop
 ```
 
 No olvides configurar el agente para que pueda revisar tu repo, abre el archivo smith.yaml y modifica los siguentes paraemtros 
