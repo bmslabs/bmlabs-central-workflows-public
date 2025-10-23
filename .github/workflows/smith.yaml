@@ -93,8 +93,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: CodeReview Report
-          path: /app/out/bmlabs-votacion-api.zip
-          retention-days: 1  
+          path: /app/out/detalle.md
+          retention-days: 7  
 
       - name: ✅ Publicar Resultado en GitHub Checks        
         uses: actions/github-script@v6
