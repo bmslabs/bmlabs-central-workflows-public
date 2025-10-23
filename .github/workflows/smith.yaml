@@ -36,11 +36,11 @@ on:
       BUCKET_SECRET_KEY:
         required: true
       SLACK_TOKEN:      
-        required: true      
+        required: false      
       SLACK_CHANNEL_ID:
-        required: true
+        required: false
       GIT_TOKEN:
-        required: true
+        required: false
 jobs: 
   docker-login:
     name: 🔐 Login to DOCR
@@ -64,11 +64,11 @@ jobs:
     steps:                     
       - name: 🔄 Clonar el repositorio        
         uses: actions/checkout@v4
-        with:      
-          submodules: recursive      
-          fetch-depth: 0      
-          persist-credentials: true      
-          token: ${{ secrets.GIT_TOKEN }}
+        #with:      
+        #  submodules: recursive      
+        #  fetch-depth: 0      
+        #  persist-credentials: true      
+        #  token: ${{ secrets.GIT_TOKEN }}
         
       - name: 🦾 Ejecutar AI Code Review Agent         
         env:
@@ -83,6 +83,7 @@ jobs:
           BUCKET: ${{ secrets.BUCKET }}
           BUCKET_ACCESS_KEY: ${{ secrets.BUCKET_ACCESS_KEY }} 
           BUCKET_SECRET_KEY: ${{ secrets.BUCKET_SECRET_KEY }}
+          TOSLACK: "False"
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
           
