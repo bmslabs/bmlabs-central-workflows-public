@@ -1,5 +1,16 @@
 # bmlabs-central-workflows
 
+## Configuracion de secretos 
+
+Se deben configurar los siguiente secretos, en el repositorio a revisar, esto se hace en el menu de repositorio Setting -> Secrets & Variables -> Action
+
+```code
+  OPENAI_API_KEY
+  REGISTRY_SECRET
+  BUCKET
+  BUCKET_ACCESS_KEY
+  BUCKET_SECRET_KEY
+```
 ## Instalación de la herramienta `gh`
 
 La herramienta [`gh`](https://cli.github.com/) es la CLI oficial de GitHub. Para instalarla en macOS, ejecuta:
