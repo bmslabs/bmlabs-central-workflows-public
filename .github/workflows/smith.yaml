@@ -20,6 +20,10 @@ on:
       PROJECT_KEY:
         required: true
         type: string
+      REVISION_PARCIAL:
+        required: false
+        type: string
+        default: "False"
     secrets:    
       REGISTRY_SECRET:
         required: true
