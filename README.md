@@ -35,6 +35,7 @@ Copia el archivo `smith.yaml` desde la raíz de este repositorio al directorio .
 cp /ruta/al/bmlabs-central-workflows/smith.yaml /ruta/al/tu-proyecto/.github/workflows
 ```
 
+
 ### 2. Ejecutar el Action
 
 Utiliza la herramienta `gh` para ejecutar el action. Asegúrate de estar autenticado con GitHub (`gh auth login`).
@@ -44,6 +45,7 @@ Ejemplo de ejecución:
 ```sh
  gh workflow run run-smith.yaml --ref develop
 ```
+**Si existe error 404, es importante saber que el archivo .github/workflows/smith.yaml debe estar copiado tambien en la rama por defecto del repositorio, generalemnte es la rama main a menos que se configure de otra forma.**
 
 No olvides configurar el agente para que pueda revisar tu repo, abre el archivo smith.yaml y modifica los siguentes paraemtros 
 
